@@ -1,0 +1,47 @@
+class Solution:
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        parents = {} # Space O(N)
+        count = 2
+        stack = [root]
+        # Using DFS to find p and q
+        while len(stack) > 0: # Time O(N)
+            if count == 0:
+                break
+            cur = stack.pop(-1)
+            if cur == p or cur == q:
+                count -= 1
+            
+            if cur.left is not None:
+                parents[cur.left] = cur
+                stack.append(cur.left)
+            if cur.right is not None:
+                parents[cur.right] = cur
+                stack.append(cur.right)
+
+        if count > 0:
+            # Cannot find both p and q
+            return None
+        
+        def generateHierarchy(node):
+            nonlocal parents
+            hierarchy = []
+            while node is not None: # Time O(logN)
+                hierarchy.append(node)
+                if not node in parents:
+                    break
+                else:
+                    node = parents[node]       
+            return hierarchy[::-1]
+        
+        # Generate p hierarchy
+        pHierarchy = generateHierarchy(p)
+        # Generate q hierarchy 
+        qHierarchy = generateHierarchy(q)
+        lenOfpHierarchy = len(pHierarchy)
+        lenOfqHierarchy = len(qHierarchy)
+        index = 0
+        while (index + 1) < lenOfpHierarchy and (index + 1) < lenOfqHierarchy:
+            if pHierarchy[index + 1].val != qHierarchy[index + 1].val:
+                return pHierarchy[index]
+            index += 1
+        return pHierarchy[index]
