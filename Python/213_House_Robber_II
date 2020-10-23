@@ -1,0 +1,9 @@
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        return max(nums[0] + self._helper(nums[2:-1]), self._helper(nums[1:]))
+    
+    def _helper(self, nums: List[int]) -> int:
+        prev, curr = 0, 0
+        for num in nums:
+            prev, curr = curr, max(prev + num, curr)
+        return curr
